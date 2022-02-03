@@ -4,6 +4,7 @@ namespace App\Http\Livewire;
 
 use Livewire\Component;
 use Cart;
+
 use Illuminate\Support\Str;
 
 class Cartcomponent extends Component
@@ -39,6 +40,26 @@ class Cartcomponent extends Component
         session()->flash('success_message','all product successfully deleted');
         
         
+    }
+
+    public function switchToSaveForLater($rowId){
+        $item  = Cart::instance('cart')->get($rowId);
+        cart::instance('cart')->remove($rowId);
+        Cart::instance('saveForLater')->add($item->id, $item->name,1,$item->price)->associate('App\Models\Product');
+        $this->emitTo('cart-count-component','refreshComponent');
+        session()->flash('success_message','your product has being successfully saved for later ');
+    }
+    public function moveToCart($rowId){
+        $item  = Cart::instance('saveForLater')->get($rowId);
+        Cart::instance('saveForLater')->remove($rowId);
+        Cart::instance('cart')->add($item->id, $item->name,1,$item->price)->associate('App\Models\Product');
+        $this->emitTo('cart-count-component','refreshComponent');
+        session()->flash('s_success_message','your product has being successfully saved to cart');
+    }
+
+    public function deleteFromSaveForLater($rowId){
+        cart::instance('saveForLater')->remove($rowId); 
+        session()->flash('s_success_message','your product has being successfully deleted');
     }
     public function render()
     {

@@ -84,6 +84,9 @@
 												<li class="menu-item" >
 													<a title ="manage sales timer" href ="{{route('admin.sale')}}">Sale setting</a>	
 												</li>
+												<li class="menu-item" >
+													<a title ="Admin Coupons" href ="{{route('admin.coupons')}}">Admin Coupons</a>	
+												</li>
 											</ul>
 										</li>
 									@else
