@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use Carbon\Carbon;
 use App\Models\Sale;
 use App\Models\Product;
 use Livewire\Component;
@@ -9,7 +10,8 @@ use App\Models\Category;
 use App\Models\HomeSlider;
 use Illuminate\Support\Str;
 use App\Models\HomeCategory;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Cart;
 
 class Homecomponent extends Component
 {
@@ -24,6 +26,12 @@ class Homecomponent extends Component
         $sproducts = Product::where('Sale_Price','>',0)->inRandomOrder()->get()->take(8);
         $sales = Sale::find(1);
         
+        if(Auth::check())
+        {
+            Cart::instance('cart')->restore(Auth::user()->email);
+            Cart::instance('instance')->restore(Auth::user()->email);
+        }
+
         return view('livewire.homecomponent',['slides'=>$slides,'latestproducts'=>$latestproducts,'categories'=>$categories,'no_of_products'=>$no_of_products,'sproducts'=>$sproducts,'sales'=>$sales])->layout('layouts.base');
     }
 }

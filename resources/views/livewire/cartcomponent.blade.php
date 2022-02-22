@@ -9,7 +9,7 @@
 				</ul>
 			</div>
 			<div class=" main-content-area">
-
+                @if(Cart::instance('cart')->count() > 0)
 				<div class="wrap-iten-in-cart">
 				@if(Session::has('success_message'))
 					<div class ="alert alert-success">
@@ -54,22 +54,55 @@
 				<div class="summary">
 					<div class="order-summary">
 						<h4 class="title-box">Order Summary</h4>
-						<p class="summary-info"><span class="title">Subtotal</span><b class="index">${{Cart::instance('cart')->subtotal()}}</b></p>
+						<p class="summary-info"><span class="title">Subtotal</span><b class="index">${{number_format(Cart::instance('cart')->subtotal(),2)}}</b></p>
+						@if(Session::has('coupon'))
+						<p class="summary-info"><span class="title">Discount {{Session::get('coupon')['code']}} <a href="#" class="fa fa-times 2x text-danger" wire:click.prevent="removeCoupon"></a></span><b class="index">-${{$discount}}</b></p>
+						<p class="summary-info"><span class="title">Subtotal With Discount </span><b class="index">${{number_format($subtotalAfterDiscount,2)}}</b></p>
+						<p class="summary-info"><span class="title">Tax ({{config('cart.tax')}}%)</span><b class="index">${{number_format($taxAfterDiscount,2)}}</b></p>
+						<p class="summary-info total-info "><span class="title">Total</span><b class="index">${{number_format( $totalAfterDiscount,2)}}</b></p>
+						@else
+						<p class="summary-info"><span class="tax">Tax</span><b class="index">${{number_format(Cart::instance('cart')->tax(),2)}}</b></p>
 						<p class="summary-info"><span class="title">Shipping</span><b class="index">Free Shipping</b></p>
-						<p class="summary-info total-info "><span class="title">Total</span><b class="index">${{Cart::instance('cart')->subtotal()}}</b></p>
+						<p class="summary-info total-info "><span class="title">Total</span><b class="index">${{number_format(Cart::instance('cart')->total(),2)}}</b></p>
+						@endif
 					</div>
-					<div class="checkout-info">
-						<label class="checkbox-field">
-							<input class="frm-input " name="have-code" id="have-code" value="" type="checkbox"><span>I have promo code</span>
-						</label>
-						<a class="btn btn-checkout" href="checkout.html">Check out</a>
-						<a class="link-to-shop" href="shop.html">Continue Shopping<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
-					</div>
+						<div class="checkout-info">
+							@if(!Session::has('coupon'))
+							<label class="checkbox-field">
+								<input class="frm-input " name="have-code" id="have-code" value="1" type="checkbox" wire:model ="haveCouponCode"><span>I have coupon code</span> 
+							</label>
+							@if($haveCouponCode == 1)
+								<div class="summary-item">
+									<form wire:submit.prevent = "applyCouponCode">
+										<h4 class="title-box">Coupon Code</h4>
+										@if(Session::has('coupon_message'))
+										   <div class="alert alert_danger" role="danger">{{Session::get('coupon_message')}}</div>
+										@endif
+										<p class="row-in-form">
+											<label for="coupon-code">Enter your coupon code:</label>
+											<input type="text" class="form-control input-md" name="coupon-code"wire:model="couponCode">
+										</p>
+										<button type="submit" class="btn btn-sm">Apply</button>
+									</form>
+								</div>
+							
+							@endif
+                            @endif
+							<a class="btn btn-checkout" href="#" wire:click.prevent="checkout">Check out</a>
+							<a class="link-to-shop" href="shop.html">Continue Shopping<i class="fa fa-arrow-circle-right" aria-hidden="true"></i></a>
+						</div>
 					<div class="update-clear">
-						<a class="btn btn-clear" href="#">Clear Shopping Cart</a>
+						<a class="btn btn-clear" href="#" wire:click.prevent="destroyAll()">Clear Shopping Cart</a>
 						<a class="btn btn-update" href="#">Update Shopping Cart</a>
 					</div>
 				</div>
+				@else
+					<div class="text-center" style="padding:30px 0;">
+					<h1>Your cart is empty</h1>
+					<p>Add item to it now </p>
+					<a href="/shop" class="btn btn-danger">Shop Now</a>
+					</div>
+				@endif
 
 				<div class="wrap-iten-in-cart">
 				 <h3 class = "title-box" style ="border-bottom:1px solid; padding-bottom::15px;">{{cart::instance('saveForLater')->count()}} item(s) Save For Later </h3>

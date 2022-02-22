@@ -2,10 +2,12 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\Product;
+use Livewire\Component;
 use App\Models\Category;
+use Illuminate\Support\Facades\Auth;
 Use Cart;
+
 
 class Shopcomponent extends Component
 {
@@ -67,6 +69,12 @@ class Shopcomponent extends Component
         }
 
         $categories = Category::all();
+
+        if(Auth::check())
+        {
+            Cart::instance('cart')->store(Auth::user()->email);
+            Cart::instance('instance')->store(Auth::user()->email);
+        }
 
         return view('livewire.shopcomponent',['products'=>$products,'categories'=>$categories])->layout('layouts.base');
     }

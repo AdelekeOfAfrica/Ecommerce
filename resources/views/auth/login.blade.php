@@ -15,6 +15,7 @@
 	<link rel="stylesheet" type="text/css" href="{{asset('assets/css/color-01.css')}}">
     @livewireStyles
 </head>
+<x-base-layout>
 <main id="main" class="main-site left-sidebar">
 
 		<div class="container">
@@ -62,6 +63,7 @@
 		</div><!--end container-->
 
 	</main>
+</x-base-layout>
 
 	<script src="{{asset('assets/js/jquery-1.12.4.minb8ff.js?ver=1.12.4')}}"></script>
 	<script src="{{asset('assets/js/jquery-ui-1.12.4.minb8ff.js?ver=1.12.4')}}"></script>

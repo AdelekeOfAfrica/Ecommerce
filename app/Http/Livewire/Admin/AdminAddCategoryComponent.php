@@ -4,12 +4,14 @@ namespace App\Http\Livewire\Admin;
 
 use Livewire\Component;
 use App\Models\Category;
+use App\Models\subcategory;
 use Illuminate\Support\Str;
 
 class AdminAddCategoryComponent extends Component
 {
     public $name;
     public $slug;
+    public $category_id;
 
     public function generateslug(){
         $this->slug = Str::slug($this->name);
@@ -27,14 +29,28 @@ class AdminAddCategoryComponent extends Component
             'name'=>'required',
             'slug'=>'required|unique:categories', //kindly note the categories section is the name of the table 
         ]);
+        if($this->category_id)
+        {
+           $scategory = new subcategory();
+           $scategory->name =$this->name;
+           $scategory->slug =$this->slug;
+           $scategory->category_id =$this->category_id;
+           $scategory->save();
+
+           
+        }
+        else{
         $category = new Category();
         $category->name = $this->name;
         $category->slug = $this->slug;
         $category->save();
+        }
         session()->flash('message','Category successfully saved');
+        
     }
     public function render()
     {
-        return view('livewire.admin.admin-add-category-component')->layout('layouts.base');
+        $categories = Category::all();
+        return view('livewire.admin.admin-add-category-component',['categories'=>$categories])->layout('layouts.base');
     }
 }
